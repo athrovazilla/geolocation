@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Geolocation</title>
+    
+    <!-- I can't run this on my phone but it runs just fine on PC, that's a bit strange... 
+    
+    [UPDATE]for phones:
+     copy-paste this link:
+     https://code.sololearn.com/WTOMV5z2pZ3x/?ref=app
+     in a browser to see it working
+    -->
+<style>
+	html, body, div {
+    padding: 0px;
+    margin: 0px;
+}
+
+div {
+    width: 400px;
+    height: 500px;
+    text-align: center;
+}
+
+img {
+    margin-top: 5px;
+}
+
+</style>
+
+</head>
+<body>
+
+    <div id="map">
+        Trying to get your location...
+    </div>
+
+    <script>
+
+    var map = document.getElementById('map');
+
+    function geoPromise() {
+        return new Promise(function (resolve, reject) {
+
+            navigator.geolocation.getCurrentPosition(
+                function (position) {
+                    resolve(position);
+                },
+                function (error) {
+                    reject(error);
+                },
+                {timeout: 30000}
+            );
+        });
+    }
+
+
+    function getImage(position) {
+        var image = document.createElement('img');
+        var src =
+            'https://maps.googleapis.com/maps/api/staticmap?center=' +
+            position.coords.latitude + ',' + position.coords.longitude +
+            '&markers=color:red%7Clabel:You%7C' +
+            position.coords.latitude +',' + position.coords.longitude +
+            '&zoom=14&size=400x400&scale=3&key=AIzaSyAO4bcpSoSdn3__53D2QguB6RvRNMhWd_I';
+        image.setAttribute('src', src);
+        map.innerHTML = 'You are here.<br>';
+        map.appendChild(image);
+    }
+
+    function handleErrors(error) {
+        switch ( error.code ) {
+            case 1:
+            {
+                map.innerHTML = 'The acquisition of the geolocation information failed because the page didn\'t have the permission to do it.';
+                break;
+            }
+            case 2:
+            {
+                map.innerHTML = 'The acquisition of the geolocation failed because at least one internal source of position returned an internal error.';
+                break;
+            }
+            case 3:
+            {
+                map.innerHTML = 'The time allowed to acquire the geolocation was reached';
+                break;
+            }
+        }
+    }
+
+    geoPromise().
+        then(getImage).
+        catch(handleErrors);        
+        
+        
+    </script>
+</body>
+</html>
